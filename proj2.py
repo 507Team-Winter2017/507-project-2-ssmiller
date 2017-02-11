@@ -40,6 +40,12 @@ print('\n*********** PROBLEM 3 ***********')
 print("Mark's page -- Alt tags\n")
 
 ### Your Problem 3 solution goes here
+base_url = 'http://newmantaylor.com/gallery.html'
+r = requests.get(base_url)
+soup = BeautifulSoup(r.text, 'html.parser')
+pics = soup.find_all('img')
+for picture in pics:
+	print(picture.get('alt',"No Alternative Text"))
 
 
 #### Problem 4 ####
