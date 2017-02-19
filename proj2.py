@@ -72,28 +72,35 @@ def nextpagecheck(html, tag, tagclass):
 def findemails(html, tag, tagclass):
 	# details = soup.find_all('div', class_ = 'field-item')
 	details = html.find_all(tag, class_ = tagclass)
-	print(details)
+	for detail in details:
+		# if detail.find('a'):
+		# 	print("test")
+		# 	print(detail)
+		print("test")
+
 
 #First pass through
 base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4"
   
 r = requests.get(base_url,headers={'User-Agent': 'Mozilla/5.0'})
 soup = BeautifulSoup(r.text, 'html.parser')
-findemails(soup, 'div', 'field-item')
+# findemails(soup, 'div', 'field-item')
+findemails(soup, 'div', 'views-row')
 
 #Look for second page
 newpage = nextpagecheck(soup, 'li', 'pager-next')
 pagecount = 1
 #Parse remaining pages
-while newpage:
-	pagecount += 1
-	# print(newpage)
-	r = requests.get(newpage,headers={'User-Agent': 'Mozilla/5.0'})
-	soup = BeautifulSoup(r.text, 'html.parser')
-	findemails(soup, 'div', 'field-item')
-	newpage = nextpagecheck(soup, 'li', 'pager-next')
+# while newpage:
+# 	pagecount += 1
+# 	# print(newpage)
+# 	r = requests.get(newpage,headers={'User-Agent': 'Mozilla/5.0'})
+# 	soup = BeautifulSoup(r.text, 'html.parser')
+# 	# findemails(soup, 'div', 'field-item')
+# 	findemails(soup, 'div', 'views-row')
+# 	newpage = nextpagecheck(soup, 'li', 'pager-next')
 
-print("{} pages found".format(pagecount))
+# print("{} pages found".format(pagecount))
 
 ### Your Problem 4 solution goes here
 
