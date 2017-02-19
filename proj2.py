@@ -56,6 +56,34 @@ for picture in pics:
 #### Problem 4 ####
 print('\n*********** PROBLEM 4 ***********')
 print("UMSI faculty directory emails\n")
+base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4"
+  
+r = requests.get(base_url,headers={'User-Agent': 'Mozilla/5.0'})
+soup = BeautifulSoup(r.text, 'html.parser')
+# print(soup)
+details = soup.find_all('div', class_ = 'field-item')
+
+def nextpagecheck(html, tag, tagclass):
+	# nextpage = soup.find('li', class_ = 'pager-next')
+	root_url = "https://www.si.umich.edu" 
+	nextpage = html.find(tag, class_ = tagclass)
+	# print(nextpage)
+	nextsite = None
+	if nextpage.find('a'):
+		print("Another page found")
+		nextsite = root_url + (nextpage.find('a')['href'])
+		return nextsite
+
+newpage = nextpagecheck(soup, 'li', 'pager-next')
+pagecount = 1
+while newpage:
+	pagecount += 1
+	# print(newpage)
+	r = requests.get(newpage,headers={'User-Agent': 'Mozilla/5.0'})
+	soup = BeautifulSoup(r.text, 'html.parser')
+	newpage = nextpagecheck(soup, 'li', 'pager-next')
+
+print("{} pages found".format(pagecount))
 
 ### Your Problem 4 solution goes here
 
