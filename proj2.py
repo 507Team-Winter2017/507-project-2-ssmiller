@@ -56,13 +56,8 @@ for picture in pics:
 #### Problem 4 ####
 print('\n*********** PROBLEM 4 ***********')
 print("UMSI faculty directory emails\n")
-base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4"
-  
-r = requests.get(base_url,headers={'User-Agent': 'Mozilla/5.0'})
-soup = BeautifulSoup(r.text, 'html.parser')
-# print(soup)
-details = soup.find_all('div', class_ = 'field-item')
 
+# Function definitions
 def nextpagecheck(html, tag, tagclass):
 	# nextpage = soup.find('li', class_ = 'pager-next')
 	root_url = "https://www.si.umich.edu" 
@@ -74,13 +69,28 @@ def nextpagecheck(html, tag, tagclass):
 		nextsite = root_url + (nextpage.find('a')['href'])
 		return nextsite
 
+def findemails(html, tag, tagclass):
+	# details = soup.find_all('div', class_ = 'field-item')
+	details = html.find_all(tag, class_ = tagclass)
+	print(details)
+
+#First pass through
+base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4"
+  
+r = requests.get(base_url,headers={'User-Agent': 'Mozilla/5.0'})
+soup = BeautifulSoup(r.text, 'html.parser')
+findemails(soup, 'div', 'field-item')
+
+#Look for second page
 newpage = nextpagecheck(soup, 'li', 'pager-next')
 pagecount = 1
+#Parse remaining pages
 while newpage:
 	pagecount += 1
 	# print(newpage)
 	r = requests.get(newpage,headers={'User-Agent': 'Mozilla/5.0'})
 	soup = BeautifulSoup(r.text, 'html.parser')
+	findemails(soup, 'div', 'field-item')
 	newpage = nextpagecheck(soup, 'li', 'pager-next')
 
 print("{} pages found".format(pagecount))
