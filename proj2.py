@@ -5,8 +5,9 @@ from bs4 import BeautifulSoup
 #### Problem 1 ####
 print('\n*********** PROBLEM 1 ***********')
 print('New York Times -- First 10 Story Headings\n')
-#http://www.practicepython.org/solution/2014/07/10/17-decode-a-web-page-solutions.html
+### Your Problem 1 solution goes here
 
+#http://www.practicepython.org/solution/2014/07/10/17-decode-a-web-page-solutions.html
 base_url = 'http://www.nytimes.com'
 r = requests.get(base_url)
 soup = BeautifulSoup(r.text, 'html.parser')
@@ -16,12 +17,14 @@ for story_heading in soup.find_all(class_="story-heading")[:10]:
     else: 
         print(story_heading.contents[0].strip())
 
-### Your Problem 1 solution goes here
+
 
 
 #### Problem 2 ####
 print('\n*********** PROBLEM 2 ***********')
 print('Michigan Daily -- MOST READ\n')
+
+### Your Problem 2 solution goes here
 base_url = 'https://www.michigandaily.com/'
 r = requests.get(base_url)
 soup = BeautifulSoup(r.text, 'html.parser')
@@ -35,6 +38,7 @@ for tag in divtags:
 ### request assistance to make this use children instead of the double-loop
 
 
+
 #### Problem 3 ####
 print('\n*********** PROBLEM 3 ***********')
 print("Mark's page -- Alt tags\n")
@@ -45,7 +49,8 @@ r = requests.get(base_url)
 soup = BeautifulSoup(r.text, 'html.parser')
 pics = soup.find_all('img')
 for picture in pics:
-	print(picture.get('alt',"No Alternative Text"))
+	print(picture.get('alt',"No alternative text provided!"))
+# why doesn't "alt" in picture work as a test?
 
 
 #### Problem 4 ####
@@ -53,3 +58,5 @@ print('\n*********** PROBLEM 4 ***********')
 print("UMSI faculty directory emails\n")
 
 ### Your Problem 4 solution goes here
+
+
