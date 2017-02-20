@@ -18,8 +18,6 @@ for story_heading in soup.find_all(class_="story-heading")[:10]:
         print(story_heading.contents[0].strip())
 
 
-
-
 #### Problem 2 ####
 print('\n*********** PROBLEM 2 ***********')
 print('Michigan Daily -- MOST READ\n')
