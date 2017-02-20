@@ -18,7 +18,11 @@ def nextpagecheck(html, tag, tagclass):
 		nextsite = root_url + (nextpage.find('a')['href'])
 		return nextsite
 
-def findemails(html, tag, tagclass):
+def findaboutURLs(html, tag, tagclass):
+	"""
+	Usage: takes a BeautifulSoup-formatted html page, the tag to find, and the class of that tag
+	Returns a list of relative path URLs based on the "about" attribute
+	"""
 	# details = soup.find_all('div', class_ = 'field-item')
 	sites = []
 	divs = html.find_all(tag, class_ = tagclass)
@@ -31,11 +35,42 @@ def findemails(html, tag, tagclass):
 	return(sites)
 
 
+def findemails(soup, addrlist):
+	"""
+	Takes BeautifulSoup-formatted html and looks for email addresses.  
+	Returns list of these email addresses
+	"""
+	em = soup.find('div', class_ = 'field-type-email')
+	emdivs = em.find_all('div', class_ = 'field-item')
+	for div in emdivs:
+		print(div.get_text())
+		addrlist.append(div.get_text())
+	return addrlist
 
+def parsesoup(page):
+	"""
+	Takes the specific page /people/person-name, forms the directory URL, 
+	accesses this page and creates soup file for it.
+	"""
+	base_url = "https://www.si.umich.edu"
+	new_url = base_url + page
+	print(new_url)
+	#r = requests.get(new_url,headers={'User-Agent': 'Mozilla/5.0'})
+	# soup = BeautifulSoup(r.text, 'html.parser')
+	fhand = open("testdetailspage.html")
+	html = fhand.read()
+	soup = BeautifulSoup(html, 'html.parser')
+	fhand.close()
+	return soup
 
 # ems = findemails(soup, 'div', 'views-row')
-ems = findemails(soup, 'div', 'node-person')
-print(ems)
+emURLs = findaboutURLs(soup, 'div', 'node-person')
+print(emURLs)
+emailaddresses = []
+for person in emURLs:
+	 findemails(parsesoup(person), emailaddresses)
+
+print('test complete')
 
 
 #Look for second page
@@ -47,8 +82,8 @@ pagecount = 1
 # 	# print(newpage)
 # 	r = requests.get(newpage,headers={'User-Agent': 'Mozilla/5.0'})
 # 	soup = BeautifulSoup(r.text, 'html.parser')
-# 	# findemails(soup, 'div', 'field-item')
-# 	findemails(soup, 'div', 'views-row')
+# 	# findaboutURLs(soup, 'div', 'field-item')
+# 	findaboutURLs(soup, 'div', 'views-row')
 # 	newpage = nextpagecheck(soup, 'li', 'pager-next')
 
 print("{} pages found".format(pagecount))
