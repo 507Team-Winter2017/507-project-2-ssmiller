@@ -14,7 +14,7 @@ def nextpagecheck(html, tag, tagclass):
 	# print(nextpage)
 	nextsite = None
 	if nextpage.find('a'):
-		print("Another page found")
+		# print("Another page found")
 		nextsite = root_url + (nextpage.find('a')['href'])
 		return nextsite
 
@@ -29,7 +29,7 @@ def findaboutURLs(html, tag, tagclass):
 		# print(i)
 		if i.has_attr('about'):
 			page = i['about']
-			print("******")
+			# print("******")
 			sites.append(page)
 	return(sites)
 
@@ -42,20 +42,21 @@ def findemails(soup, addrlist):
 	em = soup.find('div', class_ = 'field-type-email')
 	emdivs = em.find_all('div', class_ = 'field-item')
 	for div in emdivs:
-		print(div.get_text())
+		# print(div.get_text())
 		addrlist.append(div.get_text())
+	# print(addrlist)
 	return addrlist
 
 def parsesoup(page):
 	""" 
 	Accesses a website and creates soup file for it.
 	"""
-	r = requests.get(page,headers={'User-Agent': 'Mozilla/5.0'})  #commented out for testing during 403 error
+	r = requests.get(page,headers={'User-Agent': 'SI_CLASS'})
 	if r.status_code == 403:
 		print('403 error, try again later')
 		return None
 	soup = BeautifulSoup(r.text, 'html.parser')  #commented out while testing during 403 error
-	print(soup)
+	# print(soup)
 	# fhand = open("testdetailspage.html")
 	# html = fhand.read()
 	# soup = BeautifulSoup(html, 'html.parser')
@@ -68,45 +69,58 @@ def wrapper(html, adrlist):
 	Scrape the email addresses from all details files on that page.
 	""" 
 	emURLs = findaboutURLs(html, 'div', 'node-person')
-	print(emURLs)
+	# print(emURLs)
 	base_url = 'http://si.umich.edu'
 	# For each path provided, create a URL, parse the URL, and add to the email address list
 	for person in emURLs:
 		new_url = base_url + person
-		print(new_url)
+		# print(new_url)
 		test = findemails(parsesoup(new_url), adrlist)
 		# print(test)
-	#return test
-
-#Open and parse the first page
-# fhand = open("testdirectorypage.html")
-# html = fhand.read()
-# soup = BeautifulSoup(html, 'html.parser')
-base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4"
-soup = parsesoup(base_url)  #commented out for testing during 403 error
-print(soup)
+	return test
 
 
-emailaddresses = []
-emailaddresses = wrapper(soup, emailaddresses)
-
-
-# Look for second page
-newpage = nextpagecheck(soup, 'li', 'pager-next')
-pagecount = 1
-#Parse remaining pages
-while newpage:
-	pagecount += 1
-	soup = parsesoup(newpage)
+def main_problem4():
+	#Open and parse the first page
+	# fhand = open("testdirectorypage.html")
+	# html = fhand.read()
+	# soup = BeautifulSoup(html, 'html.parser')
+	base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4"
+	soup = parsesoup(base_url)  #commented out for testing during 403 error
 	# print(soup)
-	emailaddresses = wrapper(soup, emailaddresses)
-	# print("test*******")
-	try:
-		newpage = nextpagecheck(soup, 'li', 'pager-next')
-	except AttributeError as e:
-		newpage	= False
-		print('Error - page did not load properly: ', e)
-print(emailaddresses)
 
-print("{} pages found".format(pagecount))
-# print(newpage)
+
+	emailaddresses = []
+	emailaddresses = wrapper(soup, emailaddresses)
+	# print(emailaddresses)
+
+
+	# Look for second page
+	newpage = nextpagecheck(soup, 'li', 'pager-next')
+	pagecount = 1
+	#Parse remaining pages
+	while newpage:
+		# print(pagecount)
+		pagecount += 1
+		soup = parsesoup(newpage)
+		# print(soup)
+		emailaddresses = wrapper(soup, emailaddresses)
+		# print(emailaddresses)
+		# print("test*******", pagecount)
+		try:
+			newpage = nextpagecheck(soup, 'li', 'pager-next')
+		except AttributeError as e:
+			newpage	= False
+			print('Error - page did not load properly: ', e)
+	print(emailaddresses)
+	# print(len(emailaddresses))
+
+	# print("{} pages found".format(pagecount))
+
+	for i in range(len(emailaddresses)):
+		print (i+1, emailaddresses[i])
+
+main_problem4()
+
+
+
