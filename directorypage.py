@@ -50,12 +50,16 @@ def parsesoup(page):
 	""" 
 	Accesses a website and creates soup file for it.
 	"""
-	#r = requests.get(page,headers={'User-Agent': 'Mozilla/5.0'})  #commented out for testing during 403 error
-	# soup = BeautifulSoup(r.text, 'html.parser')  #commented out while testing during 403 error
-	fhand = open("testdetailspage.html")
-	html = fhand.read()
-	soup = BeautifulSoup(html, 'html.parser')
-	fhand.close()
+	r = requests.get(page,headers={'User-Agent': 'Mozilla/5.0'})  #commented out for testing during 403 error
+	if r.status_code == 403:
+		print('403 error, try again later')
+		return None
+	soup = BeautifulSoup(r.text, 'html.parser')  #commented out while testing during 403 error
+	print(soup)
+	# fhand = open("testdetailspage.html")
+	# html = fhand.read()
+	# soup = BeautifulSoup(html, 'html.parser')
+	# fhand.close()
 	return soup
 
 def wrapper(html, adrlist):
@@ -72,15 +76,16 @@ def wrapper(html, adrlist):
 		print(new_url)
 		test = findemails(parsesoup(new_url), adrlist)
 		# print(test)
-	return test
+	#return test
 
 #Open and parse the first page
-#base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4"
-#soup = parsesoup(base_url)  #commented out for testing during 403 error
+# fhand = open("testdirectorypage.html")
+# html = fhand.read()
+# soup = BeautifulSoup(html, 'html.parser')
+base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4"
+soup = parsesoup(base_url)  #commented out for testing during 403 error
+print(soup)
 
-fhand = open("testdirectorypage.html")
-html = fhand.read()
-soup = BeautifulSoup(html, 'html.parser')
 
 emailaddresses = []
 emailaddresses = wrapper(soup, emailaddresses)
