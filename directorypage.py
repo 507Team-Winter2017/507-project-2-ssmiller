@@ -18,15 +18,24 @@ def nextpagecheck(html, tag, tagclass):
 		nextsite = root_url + (nextpage.find('a')['href'])
 		return nextsite
 
-# def findemails(html, tag, tagclass):
-# 	# details = soup.find_all('div', class_ = 'field-item')
-# 	details = html.find_all(tag, class_ = tagclass)
-# 	for child in details.children:
-# 		print(child, type(child))
-		
-# 		print("******")
+def findemails(html, tag, tagclass):
+	# details = soup.find_all('div', class_ = 'field-item')
+	sites = []
+	divs = html.find_all(tag, class_ = tagclass)
+	for i in divs:
+		# print(i)
+		if i.has_attr('about'):
+			page = i['about']
+			print("******")
+			sites.append(page)
+	return(sites)
 
 
+
+
+# ems = findemails(soup, 'div', 'views-row')
+ems = findemails(soup, 'div', 'node-person')
+print(ems)
 
 
 #Look for second page
