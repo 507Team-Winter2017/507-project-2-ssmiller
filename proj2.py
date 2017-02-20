@@ -28,15 +28,12 @@ print('Michigan Daily -- MOST READ\n')
 base_url = 'https://www.michigandaily.com/'
 r = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
 soup = BeautifulSoup(r.text, 'html.parser')
-divtags = soup.find_all('div', class_ = 'view-most-read')
-for tag in divtags:
+for tag in soup.find_all('div', class_ = 'view-most-read'):
 	litags = tag.find_all('li')
 	for litag in litags:
 		print(litag.text)
 # http://stackoverflow.com/questions/13202087/beautiful-soup-find-children-for-particular-div
-
 ### request assistance to make this use children instead of the double-loop
-
 
 
 #### Problem 3 ####
