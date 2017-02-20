@@ -2,13 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 
 
-fhand = open("testdirectorypage.html")
-html = fhand.read()
-soup = BeautifulSoup(html, 'html.parser')
 
 # Function definitions
 def nextpagecheck(html, tag, tagclass):
-	# nextpage = soup.find('li', class_ = 'pager-next')
+	"""
+	Usage: takes a BeautifulSoup-formatted html page, the tag to find, and the class of that tag.
+	Returns the (first) anchor text (a href) of a tag with that class.
+	"""
 	root_url = "https://www.si.umich.edu" 
 	nextpage = html.find(tag, class_ = tagclass)
 	# print(nextpage)
@@ -20,10 +20,9 @@ def nextpagecheck(html, tag, tagclass):
 
 def findaboutURLs(html, tag, tagclass):
 	"""
-	Usage: takes a BeautifulSoup-formatted html page, the tag to find, and the class of that tag
-	Returns a list of relative path URLs based on the "about" attribute
+	Usage: takes a BeautifulSoup-formatted html page, the tag to find, and the class of that tag.
+	Returns a list of relative path URLs based on the "about" attribute.
 	"""
-	# details = soup.find_all('div', class_ = 'field-item')
 	sites = []
 	divs = html.find_all(tag, class_ = tagclass)
 	for i in divs:
@@ -38,7 +37,7 @@ def findaboutURLs(html, tag, tagclass):
 def findemails(soup, addrlist):
 	"""
 	Takes BeautifulSoup-formatted html and looks for email addresses.  
-	Returns list of these email addresses
+	Returns list of these email addresses.
 	"""
 	em = soup.find('div', class_ = 'field-type-email')
 	emdivs = em.find_all('div', class_ = 'field-item')
@@ -48,43 +47,61 @@ def findemails(soup, addrlist):
 	return addrlist
 
 def parsesoup(page):
+	""" 
+	Accesses a website and creates soup file for it.
 	"""
-	Takes the specific page /people/person-name, forms the directory URL, 
-	accesses this page and creates soup file for it.
-	"""
-	base_url = "https://www.si.umich.edu"
-	new_url = base_url + page
-	print(new_url)
-	#r = requests.get(new_url,headers={'User-Agent': 'Mozilla/5.0'})
-	# soup = BeautifulSoup(r.text, 'html.parser')
+	#r = requests.get(page,headers={'User-Agent': 'Mozilla/5.0'})  #commented out for testing during 403 error
+	# soup = BeautifulSoup(r.text, 'html.parser')  #commented out while testing during 403 error
 	fhand = open("testdetailspage.html")
 	html = fhand.read()
 	soup = BeautifulSoup(html, 'html.parser')
 	fhand.close()
 	return soup
 
-# ems = findemails(soup, 'div', 'views-row')
-emURLs = findaboutURLs(soup, 'div', 'node-person')
-print(emURLs)
+def wrapper(html, adrlist):
+	"""
+	Look at the BeautifulSoup-formatted html file, find any details pages in the soup,
+	Scrape the email addresses from all details files on that page.
+	""" 
+	emURLs = findaboutURLs(html, 'div', 'node-person')
+	print(emURLs)
+	base_url = 'http://si.umich.edu'
+	# For each path provided, create a URL, parse the URL, and add to the email address list
+	for person in emURLs:
+		new_url = base_url + person
+		print(new_url)
+		test = findemails(parsesoup(new_url), adrlist)
+		# print(test)
+	return test
+
+#Open and parse the first page
+#base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4"
+#soup = parsesoup(base_url)  #commented out for testing during 403 error
+
+fhand = open("testdirectorypage.html")
+html = fhand.read()
+soup = BeautifulSoup(html, 'html.parser')
+
 emailaddresses = []
-for person in emURLs:
-	 findemails(parsesoup(person), emailaddresses)
-
-print('test complete')
+emailaddresses = wrapper(soup, emailaddresses)
 
 
-#Look for second page
+# Look for second page
 newpage = nextpagecheck(soup, 'li', 'pager-next')
 pagecount = 1
 #Parse remaining pages
-# while newpage:
-# 	pagecount += 1
-# 	# print(newpage)
-# 	r = requests.get(newpage,headers={'User-Agent': 'Mozilla/5.0'})
-# 	soup = BeautifulSoup(r.text, 'html.parser')
-# 	# findaboutURLs(soup, 'div', 'field-item')
-# 	findaboutURLs(soup, 'div', 'views-row')
-# 	newpage = nextpagecheck(soup, 'li', 'pager-next')
+while newpage:
+	pagecount += 1
+	soup = parsesoup(newpage)
+	# print(soup)
+	emailaddresses = wrapper(soup, emailaddresses)
+	# print("test*******")
+	try:
+		newpage = nextpagecheck(soup, 'li', 'pager-next')
+	except AttributeError as e:
+		newpage	= False
+		print('Error - page did not load properly: ', e)
+print(emailaddresses)
 
 print("{} pages found".format(pagecount))
-print(newpage)
+# print(newpage)

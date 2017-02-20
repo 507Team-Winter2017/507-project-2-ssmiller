@@ -69,14 +69,14 @@ def nextpagecheck(html, tag, tagclass):
 		nextsite = root_url + (nextpage.find('a')['href'])
 		return nextsite
 
-def findemails(html, tag, tagclass):
-	# details = soup.find_all('div', class_ = 'field-item')
-	details = html.find_all(tag, class_ = tagclass)
-	for detail in details:
-		# if detail.find('a'):
-		# 	print("test")
-		# 	print(detail)
-		print("test")
+# def findemails(html, tag, tagclass):
+# 	# details = soup.find_all('div', class_ = 'field-item')
+# 	details = html.find_all(tag, class_ = tagclass)
+# 	for child in details.children:
+# 		print(child, type(child))
+		
+# 		print("******")
+			
 
 
 #First pass through
@@ -85,7 +85,7 @@ base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&fie
 r = requests.get(base_url,headers={'User-Agent': 'Mozilla/5.0'})
 soup = BeautifulSoup(r.text, 'html.parser')
 # findemails(soup, 'div', 'field-item')
-findemails(soup, 'div', 'views-row')
+# findemails(soup, 'div', 'views-row')
 
 #Look for second page
 newpage = nextpagecheck(soup, 'li', 'pager-next')
