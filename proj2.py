@@ -112,7 +112,7 @@ def parsesoup(page):
 	# fhand.close()
 	return soup
 
-def wrapper(html, adrlist):
+def processpage(html, adrlist):
 	"""
 	Look at the BeautifulSoup-formatted html file, find any details pages in the soup,
 	Scrape the email addresses from all details files on that page.
@@ -140,7 +140,7 @@ def main_problem4():
 
 
 	emailaddresses = []
-	emailaddresses = wrapper(soup, emailaddresses)
+	emailaddresses = processpage(soup, emailaddresses)
 	# print(emailaddresses)
 
 
@@ -153,7 +153,7 @@ def main_problem4():
 		# pagecount += 1
 		soup = parsesoup(newpage)
 		# print(soup)
-		emailaddresses = wrapper(soup, emailaddresses)
+		emailaddresses = processpage(soup, emailaddresses)
 		# print(emailaddresses)
 		# print("test*******", pagecount)
 		try:
